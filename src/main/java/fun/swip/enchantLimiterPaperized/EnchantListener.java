@@ -1,5 +1,6 @@
 package fun.swip.enchantLimiterPaperized;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
@@ -19,9 +20,11 @@ public class EnchantListener implements Listener {
 
     @EventHandler
     public void onEnchant(EnchantItemEvent event) {
-        int maxEnchants = configurationSection.getInt("max-enchants");
+        Material mat = event.getItem().getType();
+        int maxEnchants = determineMaxEnchants(mat);
+
         System.out.println("Enchantment happened!");
-        if (event.getEnchantsToAdd().size() >= maxEnchants) {
+        if (event.getEnchantsToAdd().size() > maxEnchants) {
             Map<Enchantment, Integer> enchants = event.getEnchantsToAdd();
             int amount = 0;
             Map<Enchantment, Integer> enchantmentList = new HashMap();
@@ -39,15 +42,25 @@ public class EnchantListener implements Listener {
 
     @EventHandler
     public void onEnchant(InventoryClickEvent event) {
-        int maxEnchants = configurationSection.getInt("max-enchants");
+        Material mat = event.getCurrentItem().getType();
+
+        int maxEnchants = determineMaxEnchants(mat);
         if (event.getInventory() instanceof AnvilInventory) {
             if (event.getRawSlot() == 2 && event.getCurrentItem() != null) {
-                if (event.getCurrentItem().getEnchantments().size() >= maxEnchants) {
+                if (event.getCurrentItem().getEnchantments().size() > maxEnchants) {
                     event.setCancelled(true);
                     event.getInventory().close();
                     event.getWhoClicked().sendMessage("Cannot accept more than " + maxEnchants + " enchants!");
                 }
             }
+        }
+    }
+
+    private int determineMaxEnchants(Material mat) {
+        if (configurationSection.contains("items." + mat)) {
+            return configurationSection.getInt("items." + mat);
+        } else {
+            return configurationSection.getInt("max-enchants");
         }
     }
 }
