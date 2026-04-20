@@ -1,0 +1,9 @@
+name: EnchantLimiterPaperized
+description: $description
+version: '${version}'
+
+main: fun.swip.enchantLimiterPaperized.EnchantLimiterPaperized
+api-version: '26.1.2'
+load: POSTWORLD
+
+authors: [ πrat ]
