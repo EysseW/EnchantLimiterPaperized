@@ -27,7 +27,7 @@ public class EnchantListener implements Listener {
         if (event.getEnchantsToAdd().size() > maxEnchants) {
             Map<Enchantment, Integer> enchants = event.getEnchantsToAdd();
             int amount = 0;
-            Map<Enchantment, Integer> enchantmentList = new HashMap();
+            Map<Enchantment, Integer> enchantmentList = new HashMap<>();
             for (Enchantment enchantment : enchants.keySet()) {
                 if (amount < maxEnchants) {
                     enchantmentList.put(enchantment, enchants.get(enchantment));
@@ -42,11 +42,12 @@ public class EnchantListener implements Listener {
 
     @EventHandler
     public void onEnchant(InventoryClickEvent event) {
-        Material mat = event.getCurrentItem().getType();
 
-        int maxEnchants = determineMaxEnchants(mat);
         if (event.getInventory() instanceof AnvilInventory) {
             if (event.getRawSlot() == 2 && event.getCurrentItem() != null) {
+                Material mat = event.getCurrentItem().getType();
+
+                int maxEnchants = determineMaxEnchants(mat);
                 if (event.getCurrentItem().getEnchantments().size() > maxEnchants) {
                     event.setCancelled(true);
                     event.getInventory().close();
